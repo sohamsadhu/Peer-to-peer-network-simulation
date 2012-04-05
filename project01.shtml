@@ -1,0 +1,861 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>4005-730 -- Distributed Systems</title>
+</head>
+<body bgcolor="#FFFFFF">
+<table bgcolor="#CCCCCC" border="0" cellpadding="4" cellspacing="0" width="100%">
+<tbody><tr>
+<td align="left" valign="top">
+<table bgcolor="#CCCCCC" border="0" cellpadding="0" cellspacing="0">
+<tbody><tr>
+<td align="left" valign="baseline">
+<font size="-1">
+<b>Alan Kaminsky</b>
+</font>
+</td>
+<td width="10"> </td>
+<td align="left" valign="baseline">
+<font size="-2">
+•
+</font>
+</td>
+<td width="10"> </td>
+<td align="left" valign="baseline">
+<font size="-2">
+Department of Computer Science
+</font>
+</td>
+<td width="10"> </td>
+<td align="left" valign="baseline">
+<font size="-2">
+•
+</font>
+</td>
+<td width="10"> </td>
+<td align="left" valign="baseline">
+<font size="-2">
+Rochester Institute of Technology
+</font>
+</td>
+<td width="10"> </td>
+<td align="left" valign="baseline">
+<font size="-2">
+•
+</font>
+</td>
+<td width="10"> </td>
+<td align="left" valign="baseline">
+<font size="-2">
+<a href="http://icasualties.org/Iraq/">4478</a> +
+<a href="http://icasualties.org/oef/">1806</a> =
+6284
+</font>
+</td>
+</tr>
+</tbody></table>
+</td><td align="right" valign="top">
+<font size="-1">
+<a href="http://www.cs.rit.edu/%7Eark/" target="_top">Home Page</a>
+</font>
+</td>
+</tr>
+</tbody></table>
+
+<table bgcolor="#CCCCCC" border="0" cellpadding="4" cellspacing="0" width="100%">
+<tbody><tr>
+<td align="left" valign="center">
+<table bgcolor="#CCCCCC" border="0" cellpadding="0" cellspacing="0">
+<tbody><tr>
+<td align="left" valign="center">
+<font size="-1">
+<b>Distributed Systems</b>
+</font>
+</td>
+<td width="10"> </td>
+<td align="left" valign="center">
+<font size="-2">
+4005-730-01
+</font>
+</td>
+<td width="10"> </td>
+<td align="left" valign="center">
+<font size="-2">
+Fall Quarter 2011
+</font>
+</td>
+</tr>
+</tbody></table>
+</td><td align="right" valign="center">
+<font size="-1">
+<a href="http://www.cs.rit.edu/%7Eark/730/" target="_top">Course Page</a>
+</font>
+</td>
+</tr>
+</tbody></table>
+
+
+<h2>4005-730-01 Distributed Systems
+<br>Programming Project 1</h2>
+
+<b>Prof. Alan Kaminsky -- Fall Quarter 2011</b>
+<br>Rochester Institute of Technology -- Department of Computer Science
+
+<p>
+<a href="#overview">Overview</a>
+<br><a href="#system">P2Pedia</a>
+<br><a href="#softwarereqts">Software Requirements</a>
+<br><a href="#submissionreqts">Submission Requirements</a>
+<br><a href="#grading">Grading Criteria</a>
+<br><a href="#late">Late Projects</a>
+<br><a href="#plagiarism">Plagiarism</a>
+
+</p><p>
+</p><hr>
+<a name="overview"><h2>Overview</h2></a>
+
+<p>
+Write a distributed system in Java
+for the P2Pedia peer-to-peer distributed encyclopedia.
+The P2Pedia system will include distributed objects
+and client programs,
+residing in multiple processes,
+running on different host computers,
+and communicating with each other
+using Java remote method invocation (RMI).
+
+</p><p>
+This project will assume that processes never fail.
+
+</p><p>
+</p><hr>
+<a name="system"><h2>P2Pedia</h2></a>
+
+<p>
+The P2Pedia system consists of a number of <b>nodes.</b>
+Each node contains a number of <b>articles</b> in the encyclopedia.
+Each article consists of a <b>title</b> and <b>contents.</b>
+
+</p><p>
+Each node has an <b>ID.</b>
+Each node knows the IDs of two other nodes.
+Here is an example of a P2Pedia topology with 12 nodes.
+Node 0 is connected to nodes 1 and 5;
+node 1 is connected to nodes 2 and 7;
+and so on.
+
+</p><p>
+</p><center>
+<img src="project01_files/fig01.png">
+</center>
+
+<p>
+A user sends a <b>query</b> to one of the P2Pedia nodes,
+the <b>originating node,</b>
+giving the title of the desired article.
+Starting with the originating node,
+the nodes forward the query
+throughout the P2Pedia system
+until the query reaches the <b>destination node,</b>
+namely the node that contains the desired article.
+The title specified by the user
+must exactly match the article's title.
+The contents of the article are then returned to the user.
+If the desired article does not exist,
+the user is notified of that fact.
+
+</p><p>
+The P2Pedia nodes' query forwarding algorithm is as follows:
+</p><ol type="1">
+<p></p><li>
+If the node has previously received the query,
+the node does not forward the query.
+<p></p></li><li>
+Otherwise, if the node contains the desired article
+(article title matches query title exactly),
+the node returns the contents of the article.
+<p></p></li><li>
+Otherwise, the node forwards the query to its connected nodes.
+However, if the node fails to forward the query to another node
+for any reason,
+the node ignores the failure
+and the query does not get forwarded to that other node.
+</li></ol>
+
+<p>
+Eventually, one of two things will happen:
+either the query reaches the destination node
+and the article is found,
+or the query has been received and forwarded by all the nodes
+but the article has not been found.
+
+</p><p>
+Each node's articles are stored in a file,
+a separate file for each node.
+The file contains one or more articles.
+Each article consists of a pair of lines.
+The first line of the article is the title.
+The second line of the article is the contents
+(only one line of contents is allowed for each article).
+Here is an example of an article file:
+
+</p><p>
+<table border="1" cellpadding="5" cellspacing="0">
+<tbody><tr>
+<td>
+<pre>Cow
+A sacred animal in the Hindu religion.
+Paul McCartney
+One of the legendary Fab Four.
+Finger Lakes
+A world-class wine producing region in New York State.</pre>
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+The P2Pedia distributed system
+consists of the following components:
+</p><ul>
+<p></p><li>
+A distributed object for a node.
+<p></p></li><li>
+A client program to let a user perform a query.
+<p></p></li><li>
+A log program
+that makes a log entry
+each time a query arrives at a node,
+for use by the system administrator.
+<p></p></li><li>
+The
+<a href="http://www.cs.rit.edu/%7Eark/cscl/doc/edu/rit/ds/registry/RegistryServer.html">Registry Server</a>
+from the
+<a href="http://www.cs.rit.edu/%7Eark/cscl.shtml">Computer Science Course Library</a>.
+</li></ul>
+
+<p>
+Any number of nodes,
+any number of query clients,
+and any number of log programs
+may be running simultaneously.
+Only one Registry Server is running.
+The nodes are able to handle
+<i>multiple clients making queries simultaneously.</i>
+Furthermore,
+the nodes are able to handle
+multiple clients making queries simultaneously
+<i>for the same article or different articles.</i>
+
+</p><p>
+The <i>only</i> node the client (user) knows about
+is the <i>originating node.</i>
+The client does not know
+and is not allowed to know
+how many other nodes there are,
+what the other nodes' IDs are,
+or anything about any of the other nodes.
+
+</p><p>
+</p><hr>
+<a name="softwarereqts"><h2>Software Requirements</h2></a>
+
+<ol type="1">
+
+<p>
+<b>Node Object</b>
+
+</p><p></p><li>
+The system must have a Java RMI remote object class for the Node,
+of which any number of instances may be running simultaneously.
+
+<p></p></li><li>
+An instance of the Node object
+must be run by typing this command line:
+<pre>java Start Node &lt;host&gt; &lt;port&gt; &lt;myid&gt; &lt;connid1&gt; &lt;connid2&gt; &lt;file&gt;
+</pre>
+<ul>
+<p></p><li>
+<tt>&lt;host&gt;</tt>
+is the name of the host computer where the Registry Server is running.
+</li><li>
+<tt>&lt;port&gt;</tt>
+is the port number to which the Registry Server is listening.
+</li><li>
+<tt>&lt;myid&gt;</tt>
+is the ID of the Node itself.
+</li><li>
+<tt>&lt;connid1&gt;</tt>
+is the ID of the first Node to which this Node is connected.
+</li><li>
+<tt>&lt;connid2&gt;</tt>
+is the ID of the second Node to which this Node is connected.
+</li><li>
+<tt>&lt;file&gt;</tt>
+is the name of this Node's article file.
+</li></ul>
+<p><i>Note:</i>
+This means that the Node object's class
+must be named <tt>Node</tt>,
+this class must not be in a package,
+and this class must define the appropriate constructor
+for the <tt>Start</tt> program.
+</p><p><i>Note:</i>
+The Registry Server is an instance of class
+<a href="http://www.cs.rit.edu/%7Eark/cscl/doc/edu/rit/ds/registry/RegistryServer.html">edu.rit.ds.registry.RegistryServer</a>.
+
+</p><p></p></li><li>
+The Node object's constructor must throw an exception
+if there are any of the following problems
+with the command line arguments.
+The exception's detail message
+must be a meaningful explanation of the problem.
+<ul>
+<li>
+Any required argument is missing.
+</li><li>
+There are extra arguments.
+</li><li>
+The port argument cannot be parsed as an integer.
+</li><li>
+The connid1 argument is the same as the myid argument.
+</li><li>
+The connid2 argument is the same as the myid argument.
+</li><li>
+The connid2 argument is the same as the connid1 argument.
+</li><li>
+The article file's contents cannot be read or are invalid.
+</li><li>
+There is no Registry Server running at the given host and port.
+</li><li>
+Another Node object with the same ID is already in existence.
+</li><li>
+Any other error condition is encountered
+while starting up the Node object.
+</li></ul>
+<p><i>Note:</i>
+It is not an error if the Node with ID connid1
+does not exist when this Node starts.
+</p><p><i>Note:</i>
+It is not an error if the Node with ID connid2
+does not exist when this Node starts.
+
+</p><p></p></li><li>
+Whenever the Node object receives a query,
+the Node object must delay for one second before proceeding
+to process that query.
+<p><i>Note:</i>
+This is to slow down the system
+so humans can observe its operation.
+
+</p><p></p></li><li>
+The Node object must not print anything.
+
+<p></p></li><li>
+The Node object must continue running until killed externally.
+
+<p>
+<b>Query Program</b>
+
+</p><p></p></li><li>
+The system must have a client program for making a query,
+of which any number of instances may be running simultaneously.
+
+<p></p></li><li>
+An instance of the Query program
+must be run by typing this command line:
+<pre>java Query &lt;host&gt; &lt;port&gt; &lt;id&gt; "&lt;title&gt;"
+</pre>
+<ul>
+<p></p><li>
+<tt>&lt;host&gt;</tt>
+is the name of the host computer where the Registry Server is running.
+</li><li>
+<tt>&lt;port&gt;</tt>
+is the port number to which the Registry Server is listening.
+</li><li>
+<tt>&lt;id&gt;</tt>
+is the ID of the originating Node.
+</li><li>
+<tt>"&lt;title&gt;"</tt>
+is the title of the desired article.
+The title must be enclosed in quotation marks
+in case the title contains spaces.
+</li></ul>
+<p><i>Note:</i>
+This means that the Query program's class
+must be named <tt>Query</tt>,
+and this class must not be in a package.
+</p><p><i>Note:</i>
+The Query program is a client program,
+not a distributed object.
+</p><p><i>Note:</i>
+The Registry Server is an instance of class
+<a href="http://www.cs.rit.edu/%7Eark/cscl/doc/edu/rit/ds/registry/RegistryServer.html">edu.rit.ds.registry.RegistryServer</a>.
+
+</p><p></p></li><li>
+The Query program must print an error message on the console
+and must terminate
+if there are any of the following problems
+with the command line arguments.
+The error message
+must be a meaningful explanation of the problem.
+The error message
+may include an exception stack trace.
+<ul>
+<li>
+Any required argument is missing.
+</li><li>
+There are extra arguments.
+</li><li>
+The port argument cannot be parsed as an integer.
+</li><li>
+There is no Registry Server running at the given host and port.
+</li><li>
+There is no Node with the given ID.
+</li></ul>
+
+<p></p></li><li>
+If the desired article is found,
+the Query program must print the following two lines on the console:
+<pre>&lt;title&gt;
+&lt;contents&gt;
+</pre>
+where <tt>&lt;title&gt;</tt> is replaced by the article's title
+and <tt>&lt;contents&gt;</tt> is replaced by the article's contents,
+and then the Query program must terminate.
+
+<p></p></li><li>
+If the desired article is not found,
+the Query program must print the following two lines on the console:
+<pre>&lt;title&gt;
+Not found
+</pre>
+where <tt>&lt;title&gt;</tt> is replaced by the article's title,
+and then the Query program must terminate.
+
+<p></p></li><li>
+If the Query program encounters an error condition not mentioned above,
+the Query program must print an error message on the console
+and must terminate.
+
+<p></p></li><li>
+The Query program must not print anything
+other than specified above.
+
+<p>
+<b>Log Program</b>
+
+</p><p></p></li><li>
+The system must have a client program for logging,
+of which any number of instances may be running simultaneously.
+
+<p></p></li><li>
+An instance of the Log program
+must be run by typing this command line:
+<pre>java Log &lt;host&gt; &lt;port&gt;
+</pre>
+<ul>
+<p></p><li>
+<tt>&lt;host&gt;</tt>
+is the name of the host computer where the Registry Server is running.
+</li><li>
+<tt>&lt;port&gt;</tt>
+is the port number to which the Registry Server is listening.
+</li></ul>
+<p><i>Note:</i>
+This means that the Log program's class
+must be named <tt>Log</tt>,
+and this class must not be in a package.
+</p><p><i>Note:</i>
+The Log program is a client program,
+not a distributed object.
+</p><p><i>Note:</i>
+The Registry Server is an instance of class
+<a href="http://www.cs.rit.edu/%7Eark/cscl/doc/edu/rit/ds/registry/RegistryServer.html">edu.rit.ds.registry.RegistryServer</a>.
+
+</p><p></p></li><li>
+The Log program must print an error message on the console
+and must terminate
+if there are any of the following problems
+with the command line arguments.
+The error message
+must be a meaningful explanation of the problem.
+The error message
+may include an exception stack trace.
+<ul>
+<li>
+Any required argument is missing.
+</li><li>
+There are extra arguments.
+</li><li>
+The port argument cannot be parsed as an integer.
+</li><li>
+There is no Registry Server running at the given host and port.
+</li></ul>
+
+<p></p></li><li>
+Whenever a Node object receives a query,
+the Log program must print the following line on the console:
+<pre>Node &lt;id&gt; -- query &lt;title&gt;
+</pre>
+where <tt>&lt;id&gt;</tt> is replaced by the Node's ID
+and <tt>&lt;title&gt;</tt> is replaced by the title in the query.
+
+<p></p></li><li>
+The Log program must not print anything
+other than specified above.
+
+<p></p></li><li>
+The Log program must continue running until killed externally.
+
+<p>
+<b>General Requirements</b>
+
+</p><p></p></li><li>
+The Query client program and the Node objects
+must operate in the manner described in the
+<a href="#system">P2Pedia</a> section above.
+
+</li></ol>
+
+<p>
+</p><hr>
+<a name="submissionreqts"><h2>Submission Requirements</h2></a>
+
+<p>
+Your project submission will consist of a Java archive (JAR) file
+containing the Java source files for your client program.
+
+</p><ul>
+<li>
+Each Java source file name must end in <tt>".java"</tt>.
+<p></p></li><li>
+Each class or interface
+must include a Javadoc comment
+describing the overall class or interface.
+<p></p></li><li>
+Each method within each class or interface
+must include a Javadoc comment
+describing the overall method,
+the arguments if any,
+the return value if any,
+and the exceptions thrown if any.
+</li></ul>
+
+<p>
+See my Java source files which we studied in class
+for the style of Javadoc comments I'm looking for.
+
+</p><p>
+Put all the source files into a JAR file
+named <tt>"&lt;username&gt;.jar"</tt>,
+replacing <tt>&lt;username&gt;</tt> with the user name
+from your Computer Science Department account.
+The command is:
+
+</p><p>
+<tt>jar cvf &lt;username&gt;.jar *.java</tt>
+
+</p><p>
+If your program uses classes or interfaces from the
+Computer Science Course Library
+<i>without changes,</i>
+then you do <i>not</i> need to include
+these classes' or interfaces' source files
+in your JAR file.
+If your program uses classes or interfaces from the
+Computer Science Course Library
+<i>with changes,</i>
+then you <i>do</i> need to include
+these classes' or interfaces' source files
+in your JAR file.
+
+</p><p>
+Send your JAR file to me by email at
+ark<font color="#FFFFFF" size="1">­</font>@<font color="#FFFFFF" size="1">­</font>cs.rit.edu.
+Include your full name and your computer account name
+in the email message,
+and include the JAR file as an attachment.
+
+</p><p>
+When I get your email message,
+I will extract the contents of your JAR file
+into a directory.
+However, I will <i>not</i> replace any of the source files in the
+Computer Science Course Library
+with your source files;
+your project must compile and run
+with your files in their own separate directory.
+(You can do this project
+without needing to replace any source files
+in the Computer Science Course Library.)
+I will set my Java class path
+to include the directory where I extracted your files
+and the directory where the
+Computer Science Course Library
+is installed.
+I will compile all the source files
+using the JDK 1.5.0 compiler.
+I will then send you a reply message
+acknowledging I received your project
+and stating whether I was able to compile all the source files.
+If you have not received a reply
+within one business day (i.e., not counting weekends),
+please contact me.
+Your project is not successfully submitted
+until I have sent you an acknowledgment
+stating I was able to compile all the source files.
+
+</p><p>
+The submission deadline is Monday, October 3, 2011 at 11:59pm.
+The date/time when your email message arrives in my inbox
+(not when you sent the message)
+will determine whether your project meets the deadline.
+
+</p><p>
+You may submit your project multiple times before the deadline.
+I will keep and grade only your most recent submission
+that arrived before the deadline.
+There is no penalty for multiple submissions.
+
+</p><p>
+If you submit your project before the deadline,
+but I do not accept it
+(e.g. I can't compile all the source files),
+and you cannot or do not submit your project
+again before the deadline,
+the project will be late
+(see <a href="#late">Late Submissions</a> below).
+I strongly advise you to submit the project
+several days <i>before</i> the deadline,
+so there will be time to deal with any problems
+that may arise in the submission process.
+
+</p><p>
+</p><hr>
+<a name="grading"><h2>Grading Criteria</h2></a>
+
+<p>
+Your project will be graded as follows:
+</p><ul>
+<li>(5 points) Node object remote interface design
+</li><li>(5 points) Node object implementation design
+</li><li>(5 points) Query program implementation design
+</li><li>(5 points) Log program implementation design
+</li><li><u>(20 points) Test cases</u>
+</li><li>(40 points) Total
+</li></ul>
+
+<p>
+I will evaluate the design of your interfaces and implementations
+as documented in the Javadoc
+and as implemented in the source code.
+Your project should:
+</p><ul>
+<li>Be designed using object oriented design principles.
+</li><li>Make use of reusable software components where appropriate.
+</li><li>Be documented using proper Javadoc style as described above.
+</li><li>Follow the distributed system design patterns studied in class.
+</li></ul>
+
+<p>
+Each portion of the design will be graded as follows:
+</p><ul>
+<li>5 = Design good, Javadoc good
+</li><li>4 = Design good, Javadoc unacceptable
+</li><li>3 = Design needs minor improvements
+</li><li>2 = Design needs major improvements
+</li><li>0 = Unacceptable
+</li></ul>
+
+<p>
+I will run test cases on your project
+to determine whether all the
+<a href="#softwarereqts">Software Requirements</a>
+were correctly implemented.
+The test cases will be graded as follows:
+</p><ul>
+<li>20 = Project runs and all requirements correctly implemented
+</li><li>10 = Project runs but some requirements not correctly implemented
+</li><li>0 = Project does not run
+</li></ul>
+
+<p>
+If any of the objects or programs cannot be run
+using the command lines
+specified in the above <a href="#softwarereqts">Software Requirements</a>,
+you will receive 0 points
+for the test cases portion of your grade,
+and I will not test your project further.
+
+</p><p>
+If there is <i>any</i> deviation from the requirements,
+no matter how small,
+you will receive 10 points
+for the test cases portion of your grade,
+and I will not test your project further.
+This includes errors in the output formatting,
+such as misspellings, incorrect number of spaces,
+incorrect capitalization, incorrect punctuation,
+missing characters, or extraneous characters.
+The requirements state <i>exactly</i> what the output is supposed to be,
+and there is no excuse for outputting anything different.
+If any requirement is unclear, please ask for clarification.
+
+</p><p>
+I may run the Registry Server, distributed objects, and client programs
+on the same computer or on separate computers.
+
+</p><p>
+When I run the Registry Server,
+the Java classpath will point <i>only</i> to the directory
+where the Computer Science Course Library is installed.
+There is no need for the Registry Server classpath
+to point to the directory with your compiled class files
+because you are not changing the implementation of the Registry Server.
+
+</p><p>
+When I run your distributed objects and client programs,
+the Java classpath will point first to the directory
+with your compiled class files,
+followed by the directory
+where the Computer Science Course Library is installed.
+
+</p><p>
+After grading your project
+I will put your grade and any comments I have
+in your encrypted grade file.
+For further information,
+see the <a href="http://www.cs.rit.edu/%7Eark/730/policies.shtml">Course Grading and Policies</a>
+and the <a href="http://www.cs.rit.edu/%7Eark/730/encryptedgrades.shtml">Encrypted Grades</a>.
+
+</p><p>
+</p><hr>
+<a name="late"><h2>Late Projects</h2></a>
+
+<p>
+If I have not received a successful submission of your project
+by the deadline,
+your project will be late
+and will receive a grade of 0.
+You may request an extension
+for the project.
+See the Course Policies for my
+<a href="http://www.cs.rit.edu/%7Eark/730/policies.shtml#extensions">policy on extensions</a>.
+
+</p><p>
+</p><hr>
+<a name="plagiarism"><h2>Plagiarism</h2></a>
+
+<p>
+Programming Project 1 must be entirely your own individual work.
+Programming Project 1 is <i>not</i> to be done as a team effort.
+I will not tolerate plagiarism.
+If in my judgment
+the project is not entirely your own work,
+you will automatically receive, as a minimum,
+a grade of zero for the assignment.
+See the Course Policies for my
+<a href="http://www.cs.rit.edu/%7Eark/730/policies.shtml#plagiarism">policy on plagiarism</a>.
+
+</p><p>
+<table bgcolor="#CCCCCC" border="0" cellpadding="4" cellspacing="0" width="100%">
+<tbody><tr>
+<td align="left" valign="center">
+<table bgcolor="#CCCCCC" border="0" cellpadding="0" cellspacing="0">
+<tbody><tr>
+<td align="left" valign="center">
+<font size="-1">
+<b>Distributed Systems</b>
+</font>
+</td>
+<td width="10"> </td>
+<td align="left" valign="center">
+<font size="-2">
+4005-730-01
+</font>
+</td>
+<td width="10"> </td>
+<td align="left" valign="center">
+<font size="-2">
+Fall Quarter 2011
+</font>
+</td>
+</tr>
+</tbody></table>
+</td><td align="right" valign="center">
+<font size="-1">
+<a href="http://www.cs.rit.edu/%7Eark/730/" target="_top">Course Page</a>
+</font>
+</td>
+</tr>
+</tbody></table>
+
+<table bgcolor="#CCCCCC" border="0" cellpadding="4" cellspacing="0" width="100%">
+<tbody><tr>
+<td align="left" valign="top">
+<table bgcolor="#CCCCCC" border="0" cellpadding="0" cellspacing="0">
+<tbody><tr>
+<td align="left" valign="baseline">
+<font size="-1">
+<b>Alan Kaminsky</b>
+</font>
+</td>
+<td width="10"> </td>
+<td align="left" valign="baseline">
+<font size="-2">
+•
+</font>
+</td>
+<td width="10"> </td>
+<td align="left" valign="baseline">
+<font size="-2">
+Department of Computer Science
+</font>
+</td>
+<td width="10"> </td>
+<td align="left" valign="baseline">
+<font size="-2">
+•
+</font>
+</td>
+<td width="10"> </td>
+<td align="left" valign="baseline">
+<font size="-2">
+Rochester Institute of Technology
+</font>
+</td>
+<td width="10"> </td>
+<td align="left" valign="baseline">
+<font size="-2">
+•
+</font>
+</td>
+<td width="10"> </td>
+<td align="left" valign="baseline">
+<font size="-2">
+<a href="http://icasualties.org/Iraq/">4478</a> +
+<a href="http://icasualties.org/oef/">1806</a> =
+6284
+</font>
+</td>
+</tr>
+</tbody></table>
+</td><td align="right" valign="top">
+<font size="-1">
+<a href="http://www.cs.rit.edu/%7Eark/" target="_top">Home Page</a>
+</font>
+</td>
+</tr>
+</tbody></table>
+
+<font size="-2">
+Copyright © 2011 Alan Kaminsky.
+All rights reserved.
+Last updated 27-Sep-2011.
+Please send comments to ark<font color="#FFFFFF" size="1">­</font>@<font color="#FFFFFF" size="1">­</font>cs.rit.edu.
+</font>
+
+
+
+</p></body></html>

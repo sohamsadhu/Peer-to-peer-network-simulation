@@ -1,0 +1,15 @@
+The following is a network simulation for Peer to Peer network in Java.
+The specifications for the project including how it should be executed is given in the file project01.shtml.
+
+Please note that the application made uses special Java Libraries created by Prof. Alan Kaminsky (www.cs.rit.edu/~ark)
+hence you would have to add the two jar files provided here to your classpath to execute the same.
+
+A indication of how to run the program is given in the file testcases.txt which shows the kind of commands
+you need to execute on the bash shell to see this working. The data files corresponding are also provided.
+
+Do note that Log program, each of the nodes that simulated a peer node, a start for registry server, and the query 
+program will need to work on different shel or their own terminals.
+
+* The implementation is still a bit buggy given that if two nodes simultaneously ask a node for the same entry not
+contained there then it goes in a infinite loop. The solution is throw a synchronised keyword somewhere, but is not
+straight forward and still needs to be worked on.

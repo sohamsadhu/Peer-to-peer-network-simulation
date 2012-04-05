@@ -1,0 +1,17 @@
+1. java Start edu.rit.ds.registry.RegistryServer
+2. java Log localhost 9901
+3. java Start Node localhost 9901 1 2 3 file1.txt
+4. java Query localhost 9901 1 "John Lennon"
+5. java Query localhost 9901 1 "Paul McCartney"
+6. java Start Node localhost 9901 2 1 3 file2.txt
+7. java Start Node localhost 9901 3 1 2 file3.txt
+8. java Query localhost 9901 2 "Ice cream"
+9. java Log localhost 9901
+10. java Query localhost 9901 2 "Emerald ash borer"
+11. java Query localhost 9901 2 "Gobi"
+12. java Query localhost 9901 3 "The Road Not Taken"
+13. java Query localhost 9901 3 "Sahara"
+14. java Query localhost 9901 3 "Peach"
+15. java Query localhost 9901 1 "Sahara" and java Query localhost 9901 2 "John Lennon"
+16. java Query localhost 9901 1 "Ice cream" and java Query localhost 9901 1 "Apple"
+17. java Query localhost 9901 2 "Apple" and java Query localhost 9901 2 "Apple"

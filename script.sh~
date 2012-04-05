@@ -1,0 +1,4 @@
+echo `export CLASSPATH=.:cscl20110315.jar:pj20110809.jar:$CLASSPATH`   # Set up the environment variables.
+#echo `javac *.java`                                                    # Compile all the files.
+#echo `java Start edu.rit.ds.registry.RegistryServer`
+#echo `gnome-terminal -e "bash -c \"export CLASSPATH=.:cscl20110315.jar:pj20110809.jar:$CLASSPATH; java Log localhost 9901 \""`
