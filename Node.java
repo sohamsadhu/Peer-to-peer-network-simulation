@@ -208,7 +208,7 @@ public class Node implements NodeInterface {
 	 * @return String that has got the contents of the title, empty if not found.
 	 * @throws RemoteException
 	 */
-	public String makeQuery( String title ) throws RemoteException {
+	public synchronized String makeQuery( String title ) throws RemoteException {
 		String contents = new String( "" ) ;
 		// I got the query to myself. Now report this event. Basically log
 		// wants to know what came to me so I fire a event only when I receive something.
